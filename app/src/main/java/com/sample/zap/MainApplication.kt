@@ -6,6 +6,7 @@ import com.sample.zap.core.di.repoModule
 import com.sample.zap.core.di.sharedPrefModule
 import com.sample.zap.core.di.useCaseModule
 import com.sample.zap.core.di.viewModelModule
+import com.sample.zap.data.util.CustomLogger
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -19,7 +20,7 @@ open class MainApplication : Application() {
             androidContext(this@MainApplication)
 
             modules(listOf(viewModelModule, repoModule, networkModule, useCaseModule, sharedPrefModule))
-
+            logger(CustomLogger())
         }
     }
 

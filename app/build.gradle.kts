@@ -12,7 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.sample.lms"
+        applicationId = "com.sample.zap"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

@@ -5,24 +5,24 @@ import kotlinx.coroutines.*
 
 abstract class BaseUseCase<Type : Any> : UseCaseLifeCycle {
 
-    private lateinit var parentJob: Job
+    private var parentJob: Job
+    private val coroutineScope: CoroutineScope
+
+    init {
+        parentJob = Job()
+        coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
+    }
 
     abstract suspend fun run(): Output<Type>
 
     operator fun invoke(onResult: (Output<Type>) -> Unit = {}) {
 
-        parentJob = GlobalScope.launch(Dispatchers.Main) {
-
-
+        coroutineScope.launch(Dispatchers.Main) {
             onResult(Output.Loading())
-
             val remoteJob = withContext(Dispatchers.IO) {
-
                 run()
             }
-
             onResult(remoteJob)
-
         }
     }
 
@@ -32,7 +32,6 @@ abstract class BaseUseCase<Type : Any> : UseCaseLifeCycle {
 }
 
 interface UseCaseLifeCycle {
-
     fun onCleared()
 }
 

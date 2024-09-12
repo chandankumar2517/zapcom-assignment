@@ -1,5 +1,6 @@
 package com.sample.zap.data.util
 
+import android.app.Activity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -15,12 +16,16 @@ class NetworkMonitor(private val context: Context, private val callback: Network
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
-            callback.onConnected() // Notify when the network is available
+            (context as? Activity)?.runOnUiThread {
+                callback.onConnected() // Notify when the network is available
+            }
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
-            callback.onDisconnected() // Notify when the network is lost
+            (context as? Activity)?.runOnUiThread {
+                callback.onConnected() // Notify when the network is available
+            }
         }
     }
 

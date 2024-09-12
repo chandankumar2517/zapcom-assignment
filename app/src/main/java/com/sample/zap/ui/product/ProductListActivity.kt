@@ -1,7 +1,11 @@
 package com.sample.zap.ui.product
 
 import ProductListViewModel
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -42,15 +46,6 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-       /* val dividerDrawable = ContextCompat.getDrawable(this, R.drawable.divider)
-        val dividerItemDecoration = DividerItemDecoration(
-            recyclerView.context,
-            LinearLayoutManager.VERTICAL
-        )
-        dividerDrawable?.let { drawable ->
-            dividerItemDecoration.setDrawable(drawable)
-        }
-        recyclerView.addItemDecoration(dividerItemDecoration)*/
     }
 
 
@@ -59,6 +54,15 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
 
         networkMonitor = NetworkMonitor(this, this)
 
+        // Check network status immediately
+        if (isNetworkAvailable()) {
+            // Fetch product list from server if network is available
+            productListViewModel.fetchProductList()
+        } else {
+            // Network is not available
+            onDisconnected()
+        }
+
 
         // Call the ViewModel to fetch the books list
         productListViewModel.productList.observe(this) {
@@ -66,11 +70,14 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
 
             when (it) {
                 is Output.Success -> {
+                    Log.d("ProductListActivity", "Success")
                     // Handle the successful response and update RecyclerView
                     loading.visibility = View.GONE
                     val productList = it.output
                     if(productList.isEmpty()) {
-                        textView.text = "No Item"
+                        Log.d("ProductListActivity", "Success1 ")
+                        textView.visibility = View.VISIBLE
+                        textView.text = "No Item Found"
                     } else {
                         updateRecyclerView(productList)
                     }
@@ -78,6 +85,7 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
                 }
 
                 is Output.Error -> {
+                    Log.d("ProductListActivity", "Error")
                     loading.visibility = View.GONE
 
                     // Show error message
@@ -89,23 +97,35 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
                 }
 
                 is Output.Loading -> {
+                    Log.d("ProductListActivity", "Loading")
                     // Show loading spinner
                     loading.visibility = View.VISIBLE
                 }
 
-                is Output.Exception -> loading.visibility = View.GONE
+                is Output.Exception -> {
+                    Log.d("ProductListActivity", "Exception")
+                    loading.visibility = View.GONE
+                }
             }
         }
     }
 
 
     override fun onConnected() {
-        // fetch product list from server
-        productListViewModel.fetchProductList()
+        Log.d("ProductListActivity", "onConnected")
+        runOnUiThread {
+            textView.visibility = View.GONE
+            // fetch product list from server
+            productListViewModel.fetchProductList()
+        }
     }
 
     override fun onDisconnected() {
-        Toast.makeText(this, R.string.unavailable_internet_connection, Toast.LENGTH_SHORT).show()
+        Log.d("ProductListActivity", "onDisconnected")
+        runOnUiThread {
+            textView.visibility = View.VISIBLE
+            textView.text = resources.getString(R.string.unavailable_internet_connection)
+        }
     }
 
 
@@ -115,13 +135,39 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
         recyclerView.adapter = adapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Recheck network status when the activity comes back into view
+        if (isNetworkAvailable()) {
+            productListViewModel.fetchProductList()
+        } else {
+            onDisconnected()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        networkMonitor.unregister()
+    }
+
     override fun onStart() {
+        Log.d("ProductListActivity", "onStart")
         super.onStart()
         networkMonitor.register()  // Start listening for network changes
     }
 
     override fun onStop() {
+        Log.d("ProductListActivity", "onStop")
         super.onStop()
         networkMonitor.unregister()  // Stop listening to network changes
+    }
+
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        return networkCapabilities != null &&
+                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
     }
 }

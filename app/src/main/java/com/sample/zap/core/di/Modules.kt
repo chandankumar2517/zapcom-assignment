@@ -3,7 +3,7 @@ package com.sample.zap.core.di
 import ProductListViewModel
 import com.sample.zap.core.Configuration
 import com.sample.zap.core.source.network.RemoteSourceManager
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.sample.zap.data.remote.RemoteDataSource
 import com.sample.zap.data.repository.ProductRepositoryImpl
 import com.sample.zap.domain.repository.ProductRepository
 import com.sample.zap.domain.usecase.ProductUseCase
@@ -44,7 +44,7 @@ val networkModule = module {
             .client(client)
             .baseUrl(Configuration.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            //.addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
     }
 
@@ -74,6 +74,7 @@ val networkModule = module {
     single { provideInterceptor() }
     single { provideHttpLoggingInterceptor() }
     single { RemoteSourceManager(get()) }
+    single { get<Retrofit>().create(RemoteDataSource::class.java) }
 }
 
 fun provideMoshi(): Moshi {

@@ -3,17 +3,16 @@ package com.sample.zap.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.RecyclerView
 import com.sample.zap.R
 import com.sample.zap.domain.model.Item
 import com.sample.zap.domain.model.ProductListEntity
 
-class SectionAdapter(private val sections: List<ProductListEntity>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+class SectionAdapter(private val sections: List<ProductListEntity>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         const val BANNER = 0
@@ -33,17 +32,23 @@ class SectionAdapter(private val sections: List<ProductListEntity>) : RecyclerVi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             BANNER -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_banner, parent, false)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_banner_scroll, parent, false)
                 BannerViewHolder(view)
             }
+
             HORIZONTAL_SCROLL -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_horizontal_scroll, parent, false)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_horizontal_scroll, parent, false)
                 HorizontalScrollViewHolder(view)
             }
+
             SPLIT_BANNER -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_split_banner, parent, false)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_split_banner_scroll, parent, false)
                 SplitBannerViewHolder(view)
             }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -54,12 +59,14 @@ class SectionAdapter(private val sections: List<ProductListEntity>) : RecyclerVi
             is BannerViewHolder -> {
                 val item = section.items.firstOrNull()
                 if (item != null) {
-                    holder.bind(item)
+                    holder.bind(section.items)
                 }
             }
+
             is HorizontalScrollViewHolder -> {
                 holder.bind(section.items)
             }
+
             is SplitBannerViewHolder -> {
                 holder.bind(section.items)
             }
@@ -72,15 +79,11 @@ class SectionAdapter(private val sections: List<ProductListEntity>) : RecyclerVi
 
     // ViewHolder for Banner
     class BannerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: ImageView = itemView.findViewById(R.id.bannerImage)
-        private val bannerName: TextView = itemView.findViewById(R.id.bannerName)
+        private val recyclerView: RecyclerView = itemView.findViewById(R.id.bannerRecyclerView)
 
-        fun bind(item: Item) {
-            Glide.with(itemView.context)
-                .load(item.image)
-                .into(imageView)
-
-            bannerName.text = item.title
+        fun bind(items: List<Item>) {
+            recyclerView.layoutManager = GridLayoutManager(itemView.context, 1) // 1 columns
+            recyclerView.adapter = BannerItemAdapter(items)
         }
     }
 
@@ -89,19 +92,20 @@ class SectionAdapter(private val sections: List<ProductListEntity>) : RecyclerVi
         private val recyclerView: RecyclerView = itemView.findViewById(R.id.horizontalRecyclerView)
 
         fun bind(items: List<Item>) {
-            recyclerView.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+            recyclerView.layoutManager =
+                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
             recyclerView.adapter = HorizontalItemAdapter(items)
         }
     }
 
     // ViewHolder for Split Banner
     class SplitBannerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView1: ImageView = itemView.findViewById(R.id.splitImage1)
-        private val imageView2: ImageView = itemView.findViewById(R.id.splitImage2)
+
+        private val recyclerView: RecyclerView = itemView.findViewById(R.id.splitRecyclerView)
 
         fun bind(items: List<Item>) {
-            Glide.with(itemView.context).load(items[0].image).into(imageView1)
-            Glide.with(itemView.context).load(items[1].image).into(imageView2)
+            recyclerView.layoutManager = GridLayoutManager(itemView.context, 2) // 2 columns
+            recyclerView.adapter = SplitBannerItemAdapter(items)
         }
     }
 }

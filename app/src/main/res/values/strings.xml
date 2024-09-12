@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">ZapCom-Client</string>
     <string name="title">ZapCom</string>
+
+    <string name="unavailable_internet_connection">No internet connection</string>
 </resources>

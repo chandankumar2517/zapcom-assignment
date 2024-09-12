@@ -49,9 +49,9 @@ dependencies {
     implementation(libs.kotlinCoroutinesCore)
     implementation(libs.retrofit)
     implementation(libs.retrofitMoshiConverter)
-    implementation(libs.retrofitCoroutinesAdapter)
+    //implementation(libs.retrofitCoroutinesAdapter)
     implementation(libs.okhttpLoggingInterceptor)
-    implementation(libs.okhttp)
+    //implementation(libs.okhttp)
 
     implementation(libs.koinCore)
     implementation(libs.koinAndroid)
@@ -62,6 +62,10 @@ dependencies {
     implementation(libs.splash)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlin.coroutine.test)
+    testImplementation(libs.arch.core.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.espresso.core)

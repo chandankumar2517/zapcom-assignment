@@ -21,7 +21,9 @@ retrofitAdapterVersion = "0.9.2"
 
 glideVersion = "4.16.0"
 
-splashVersion = "1.0.0"
+splashVersion = "1.0.1"
+
+mockito = "3.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,8 +37,8 @@ kotlinCoroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-corout
 # Retrofit2
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofitMoshiConverter = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
-retrofitCoroutinesAdapter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlin-coroutines-adapter", version = "0.9.2" }
-#retrofitCoroutinesAdapter = { group = "com.jakewharton.retrofit2", name = "adapter-kotlin-coroutines", version.ref = "retrofitAdapterVersion" }
+#retrofitCoroutinesAdapter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlin-coroutines-adapter", version = "0.9.2" }
+#retrofitCoroutinesAdapter = { group = "com.jakewharton.retrofit2", name = "retrofit2-kotlin-coroutines-adapter", version = "0.9.2" }
 
 #moshi
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshiVersion" }
@@ -44,7 +46,7 @@ moshiKotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi
 
 
 # OkHttp3
-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version = "4.12.0" }
+#okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version = "4.12.0" }
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version = "4.12.0" }
 
 # Koin
@@ -52,18 +54,23 @@ koinCore = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" 
 koinAndroid = { group = "io.insert-koin", name = "koin-android", version.ref = "koin"  }
 
 # gson
-gson = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
+#gson = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
 
 #Glide
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glideVersion" }
 
-#splash-screen
 splash = {module = "androidx.core:core-splashscreen", version.ref = "splashVersion"}
 
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidTestCore" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-inline = { group = "org.mockito", name = "mockito-inline", version = "4.0.0" }
+kotlin-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.8.1"}
+arch-core-test = { group = "androidx.arch.core", name = "core-testing", version = "2.2.0" }
+
+
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-espresso-idle = { group = "androidx.test.espresso", name = "espresso-idling-resource", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

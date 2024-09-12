@@ -18,6 +18,7 @@ import com.sample.zap.R
 import com.sample.zap.core.bases.BaseActivity
 import com.sample.zap.core.models.Output
 import com.sample.zap.data.util.NetworkMonitor
+import com.sample.zap.data.util.NetworkUtil
 import com.sample.zap.domain.model.ProductListEntity
 import com.sample.zap.ui.adapter.SectionAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -55,7 +56,7 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
         networkMonitor = NetworkMonitor(this, this)
 
         // Check network status immediately
-        if (isNetworkAvailable()) {
+        if (NetworkUtil.isInternetAvailable(this)) {
             // Fetch product list from server if network is available
             productListViewModel.fetchProductList()
         } else {
@@ -138,7 +139,7 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
     override fun onResume() {
         super.onResume()
         // Recheck network status when the activity comes back into view
-        if (isNetworkAvailable()) {
+        if (NetworkUtil.isInternetAvailable(this)) {
             productListViewModel.fetchProductList()
         } else {
             onDisconnected()
@@ -163,11 +164,5 @@ class ProductListActivity : BaseActivity(), NetworkMonitor.NetworkCallback {
     }
 
 
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        return networkCapabilities != null &&
-                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
-    }
+
 }
